@@ -20,18 +20,17 @@ export default function Item() {
         const itemCard = ReactDOM.findDOMNode(ReactDOM.findDOMNode(target).parentNode).parentNode;
         const itemId = parseInt(itemCard.id.charAt(itemCard.id.length - 1));
         const quantitySelect = document.getElementById('quantity_item_' + itemId);
+        const buyingPriceElement = document.getElementById('item_price_' + itemId);
 
         // add item to cart on the server
-        const cartId = cookies.cartId;
-        const url = baseURL + 'carts/' + cartId + '/addItems';
-
         axios({
             method: 'POST',
-            url: url,
+            url: baseURL + 'carts/' + cookies.cartId + '/addItems',
             data: {
-                cartId: cartId,
+                cartId: cookies.cartId,
                 itemId: itemId,
-                quantity: quantitySelect.value
+                quantity: quantitySelect.value,
+                buyingPrice: buyingPriceElement.getAttribute('data-item-price')
             }
         })
             .then(function (response) {
@@ -75,7 +74,7 @@ export default function Item() {
                                 <Card.Img variant="right" alt={item.name} src="/logo192.png" style={{ float: 'right' }} />
                                 <Card.Title>Item: {item.name}</Card.Title>
                                 <Card.Text>Description: {item.description}</Card.Text>
-                                <Card.Text>Price: ${item.price}</Card.Text>
+                                <Card.Text id={"item_price_" + item.id} data-item-price={item.price}>Price: ${item.price}</Card.Text>
                                 Quantity: <select id={"quantity_item_" + item.id}>{quantityNumberOptions}</select><br /><br />
                                 <Button variant="warning" onClick={handleAddToCart}>Add to cart</Button>
                                 <Button variant="primary" onClick={handleBuyNow}>Buy Now</Button>
@@ -102,10 +101,10 @@ export default function Item() {
                 .catch(function (error) {
                     toast.error(error.response.statusText);
                 });
+
+                return (() => {});
         }
-    }, [categoryId, cookies.jwtToken, cookies.tokenType, handleAddToCart, isUserLoggedIn, itemsData]);
-
-
+    }, [categoryId, cookies.jwtToken, cookies.tokenType, handleAddToCart, handleBuyNow, isUserLoggedIn, itemsData]);
     
     if(!isUserLoggedIn){
         return (<h1 style={{ textAlign: 'center', marginTop: 50, backgroundColor: 'aquamarine' }}>

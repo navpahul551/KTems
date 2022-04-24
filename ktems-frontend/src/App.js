@@ -4,6 +4,7 @@ import { useCookies } from 'react-cookie';
 import { Route, Routes } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import './App.css';
+import Cart from './components/Cart.js';
 import Item from './components/Category.js';
 import Home from './components/Home.js';
 import Login from './components/Login.js';
@@ -106,6 +107,7 @@ function App(props) {
           <Route path="/login" element={<Login updateJWTToken={updateJWTToken} />} />
           <Route path="/register" element={<Register updateJWTToken={updateJWTToken} />} />
           <Route path="/categories/:categoryId" element={<Item />} />
+          <Route path="/cart" element={<Cart />} />
         </Routes>
       <ToastContainer />
     </>

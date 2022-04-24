@@ -32,6 +32,7 @@ public class ItemService {
     }
 
     public Item getItem(Long id) throws Exception {
+        System.out.println("item to find item id: " + id.toString());
         Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         return item;
     }

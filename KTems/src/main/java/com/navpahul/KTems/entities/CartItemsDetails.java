@@ -7,8 +7,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.Getter;
+
 @Entity
 @Table(name="cart_items")
+@Getter
 public class CartItemsDetails {
     
     @Id
@@ -24,10 +27,14 @@ public class CartItemsDetails {
     @Column(name="quantity")
     private Long quantity;
 
-    public CartItemsDetails(Long cartId, Long itemId, Long quantity){
+    @Column(name="buying_price")
+    private double buyingPrice;
+
+    public CartItemsDetails(Long cartId, Long itemId, Long quantity, double buyingPrice){
         this.cartId = cartId;
         this.itemId = itemId;
         this.quantity = quantity;
+        this.buyingPrice = buyingPrice;
     }
 
     public CartItemsDetails() {}
@@ -46,6 +53,10 @@ public class CartItemsDetails {
 
     public Long getQuantity(){
         return this.quantity;
+    }
+
+    public double getBuyingPrice(){
+        return this.buyingPrice;
     }
 
     public void setQuantity(Long quantity){

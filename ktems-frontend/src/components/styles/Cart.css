@@ -1,0 +1,4 @@
+.cart-quantity-input:focus{
+    border: none;
+    outline: none;
+}

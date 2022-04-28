@@ -101,9 +101,10 @@ export default function Item() {
                 .catch(function (error) {
                     toast.error(error.response.statusText);
                 });
-
-                return (() => {});
         }
+        return (() => {
+            setItemsData();
+        });
     }, [categoryId, cookies.jwtToken, cookies.tokenType, handleAddToCart, handleBuyNow, isUserLoggedIn, itemsData]);
     
     if(!isUserLoggedIn){

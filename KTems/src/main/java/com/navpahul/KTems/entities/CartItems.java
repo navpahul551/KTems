@@ -12,7 +12,7 @@ import lombok.Getter;
 @Entity
 @Table(name="cart_items")
 @Getter
-public class CartItemsDetails {
+public class CartItems {
     
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -27,17 +27,16 @@ public class CartItemsDetails {
     @Column(name="quantity")
     private Long quantity;
 
-    @Column(name="buying_price")
-    private double buyingPrice;
-
-    public CartItemsDetails(Long cartId, Long itemId, Long quantity, double buyingPrice){
+    // @Column(name="buying_price")
+    // private double buyingPrice;
+    
+    public CartItems(Long cartId, Long itemId, Long quantity){
         this.cartId = cartId;
         this.itemId = itemId;
         this.quantity = quantity;
-        this.buyingPrice = buyingPrice;
     }
 
-    public CartItemsDetails() {}
+    public CartItems() {}
 
     public Long getId() {
         return this.id;
@@ -53,10 +52,6 @@ public class CartItemsDetails {
 
     public Long getQuantity(){
         return this.quantity;
-    }
-
-    public double getBuyingPrice(){
-        return this.buyingPrice;
     }
 
     public void setQuantity(Long quantity){

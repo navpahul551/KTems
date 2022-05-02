@@ -1,6 +1,6 @@
 package com.navpahul.KTems.controllers;
 
-import com.navpahul.KTems.entities.CartItemsDetails;
+import com.navpahul.KTems.data.CartItemsDetails;
 import com.navpahul.KTems.exceptions.CartNotFoundException;
 import com.navpahul.KTems.exceptions.ItemNotFoundException;
 import com.navpahul.KTems.exceptions.NotEnoughItemsException;
@@ -53,22 +53,4 @@ public class CartController {
             return new ResponseEntity<>("An error occurred while processing your request", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    // needs to be fixed
-    // find the item to be removed based on three things or the primary key
-    // @DeleteMapping("{cartId}/items/{itemId}/remove")
-    // public ResponseEntity<?> removeItems(@PathVariable(name="cartId") Long cartId, @PathVariable(name="itemId") Long itemId){
-    //     try{
-    //         cartService.removeItemsFromCart(cartId, itemId);
-    //         return ResponseEntity.ok("Items have been removed from the cart successfully!!!");
-    //     }
-    //     catch(CartNotFoundException | ItemNotFoundException e){
-    //         e.printStackTrace();
-    //         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-    //     }
-    //     catch(Exception e){
-    //         e.printStackTrace();
-    //         return new ResponseEntity<>("An error occurred while processing your request", HttpStatus.INTERNAL_SERVER_ERROR);
-    //     }
-    // }
 }

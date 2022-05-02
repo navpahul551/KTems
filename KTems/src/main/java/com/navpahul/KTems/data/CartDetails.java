@@ -2,7 +2,7 @@ package com.navpahul.KTems.data;
 
 import java.util.List;
 
-import com.navpahul.KTems.entities.CartItemsDetails;
+import com.navpahul.KTems.entities.CartItems;
 import com.navpahul.KTems.entities.User;
 
 import lombok.Getter;

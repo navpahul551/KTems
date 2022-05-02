@@ -1,6 +1,6 @@
 package com.navpahul.KTems.services;
 
-import com.navpahul.KTems.entities.CartItemsDetails;
+import com.navpahul.KTems.entities.CartItems;
 import com.navpahul.KTems.repositories.CartItemsRepository;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -15,8 +15,16 @@ public class CartItemsService {
         this.cartItemsRepository = cartItemsRepository;
     }
 
+    public void updateCartItemQuantityById(Long cartItemId, Long quantity) throws NotFoundException{
+        CartItems cartItemsToUpdate = cartItemsRepository.findById(cartItemId).orElseThrow(NotFoundException::new);
+        
+        cartItemsToUpdate.setQuantity(quantity);
+
+        cartItemsRepository.save(cartItemsToUpdate);
+    }
+
     public void deleteCartItemById(Long cartItemId) throws NotFoundException{
-        CartItemsDetails cartItemsdToDelete = cartItemsRepository.findById(cartItemId).orElseThrow(NotFoundException::new);
+        CartItems cartItemsdToDelete = cartItemsRepository.findById(cartItemId).orElseThrow(NotFoundException::new);
 
         cartItemsRepository.delete(cartItemsdToDelete);
     }

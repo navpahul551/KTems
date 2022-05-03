@@ -1,8 +1,10 @@
+import axios from 'axios';
 import React from 'react';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { baseURL } from '../App.js';
 import logo from '../ktems-logo.png';
 import './styles/NavigationBar.css';
 
@@ -18,9 +20,30 @@ export default function NavigationBar(props) {
     // clearing cookie data to logout the user
     const logout = () => {
         console.log("logout...");
+        
+        // logging out the user from the security context at the API
+        axios({
+            method: 'POST',
+            url: baseURL + 'users/logout',
+            headers: {
+                'Authorization': cookies.tokenType + ' ' + cookies.jtwToken
+            }
+        })
+        .then(function(response){
+            console.log("success:");
+            console.log(response);
+        })
+        .catch(function(error){
+            console.log("error: ");
+            console.log(error);
+        });
+        
+        // removing the saved cookies
         removeCookie('jwtToken');
         removeCookie('tokenType');
         removeCookie('userDetails');
+
+        // redirecting to the home page
         if(window.location.pathname === "/"){
             window.location.reload();
         }

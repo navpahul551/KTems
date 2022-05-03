@@ -35,7 +35,9 @@ export default function Item() {
                 toast.success(response.data);
             })
             .catch(function (error) {
-                toast.error(error.response.statusText);
+                console.log(error);
+                console.log(error.response);
+                toast.error(error.response.data);
             })
             .then(function () {
                 console.log("complete function executed");
@@ -100,7 +102,6 @@ export default function Item() {
                     },
                     url: baseURL + "categories/" + categoryId,
                     signal: categoryDetailsAbortController.signal
-    
                 })
                     .then(function (response) {
                         setCategoryDetails(response.data);

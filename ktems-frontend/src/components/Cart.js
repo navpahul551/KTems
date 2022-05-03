@@ -31,6 +31,9 @@ export default function Cart(props) {
                         const cartItemQuantitySelect = document.getElementById('quantity_item_' + cartItem.id);
                         const itemDetailsInDatabase = response.data;
 
+                        // removing the previously appended options from the select box
+                        cartItemQuantitySelect.innerHTML = '';
+
                         // filling the options of the quantity select of the item
                         for (let i = 1; i <= itemDetailsInDatabase.quantity; i++) {
                             let option = document.createElement('option');
@@ -45,7 +48,7 @@ export default function Cart(props) {
                             cartItemQuantitySelect.selectedIndex = itemDetailsInDatabase.quantity - 1;
                             document.getElementById('alert-item-' + cartItem.id).hidden = false;
 
-                            console.log("patching the item's quantity   ...");
+                            console.log("patching the item's quantity...");
                             // send an API request to update the bought quantity of the item
                             axios({
                                 method: 'PATCH',
@@ -82,6 +85,36 @@ export default function Cart(props) {
             });
         }
     }, [cartItemsData, cookies.jwtToken, cookies.tokenType]);
+
+    /**
+     * handles the event when the user changes the item 's quantity in the cart
+     * @param {*} event 
+     */
+    const handleCartQuantityChange = ({target}) => {
+        const cartItemId = target.id.split('_')[2];
+
+        axios({
+            method: 'PATCH',
+            url: baseURL + 'cartItems/' + cartItemId,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': cookies.tokenType + ' ' + cookies.jwtToken
+            },
+            params: {
+                quantity: target.value
+            }
+        })
+        .then(function(response){
+            console.log("success: ");
+            console.log(response);
+            toast.success(response.data);
+        })
+        .catch(function(error){
+            console.log("error: ");
+            console.log(error);
+            window.location.reload();
+        });
+    };
 
     const fetchCartItemsData = useCallback(() => {
         const handleCartItemDelete = ({target}) => {
@@ -130,7 +163,7 @@ export default function Cart(props) {
                             <Card.Title>Item: {cartItem.itemDetails.name}</Card.Title>
                             <Card.Text>Description: {cartItem.itemDetails.description}</Card.Text>
                             <Card.Text>Price: ${cartItem.itemDetails.price}</Card.Text>
-                            Quantity: <select data-quantity-bought={cartItem.quantity} id={"quantity_item_" + cartItem.id}></select><br /><br />
+                            Quantity: <select data-quantity-bought={cartItem.quantity} id={"quantity_item_" + cartItem.id} onChange={handleCartQuantityChange}></select><br /><br />
                             <Button variant="danger" id={"cart_item_delete_" + cartItem.id} onClick={handleCartItemDelete}>Delete</Button>
                             <br />
                             <Alert key={"alert-item-" + cartItem.id} id={"alert-item-" + cartItem.id} variant="warning" hidden>
@@ -153,7 +186,7 @@ export default function Cart(props) {
     }, [cookies.cartId, fetchCartItemsData, isUserLoggedIn]);
 
     return (<div className="container" style={{ marginTop: 10 }}>
-        <div className="row justify-content-center" style={{ fontSize: 50, backgroundColor: 'aquamarine' }}>CART</div>
+        <div className="row justify-content-center" style={{ fontSize: 50, backgroundColor: '#FFC107', fontWeight: 'bold' }}>CART</div>
         <div className="row">{cartItems === null || cartItems === undefined || cartItems.length === 0 ? 'The cart is empty' : cartItems}</div>
     </div>);
 }

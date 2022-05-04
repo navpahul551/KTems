@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { baseURL } from '../App';
+import Loader from './Loader.js';
 
 export default function Item() {
     const [cookies] = useCookies();
@@ -13,6 +14,7 @@ export default function Item() {
     const [itemsData, setItemsData] = useState();
     const [items, setItems] = useState();
     const [categoryDetails, setCategoryDetails] = useState();
+    const [loading, setLoading] = useState(true);
 
     const isUserLoggedIn = (cookies.jwtToken !== undefined && cookies.tokenType !== undefined);
 
@@ -54,64 +56,64 @@ export default function Item() {
             const itemsDataAbortController = new AbortController();
             const categoryDetailsAbortController = new AbortController();
             // fetching items data
-            setTimeout(function(){
-                axios({
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': cookies.tokenType + " " + cookies.jwtToken
-                    },
-                    url: baseURL + "categories/" + categoryId + "/items",
-                    signal: itemsDataAbortController.signal
+            axios({
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': cookies.tokenType + " " + cookies.jwtToken
+                },
+                url: baseURL + "categories/" + categoryId + "/items",
+                signal: itemsDataAbortController.signal
+            })
+                .then(function (response) {
+                    setItemsData(response.data);
+
+                    setItems(response.data.map((item, index) => {
+                        let quantityNumberOptions = [];
+
+                        for (let i = 1; i <= parseInt(item.quantity); i++) {
+                            quantityNumberOptions.push(<option key={"item_" + item.id + "_option_" + i} value={i}>{i}</option>);
+                        }
+
+                        return (<Card key={"item_" + item.id} id={"item_" + item.id}>
+                            <Card.Body>
+                                <Card.Img variant="right" alt={item.name} src="/logo192.png" style={{ float: 'right' }} />
+                                <Card.Title>Item: {item.name}</Card.Title>
+                                <Card.Text>Description: {item.description}</Card.Text>
+                                <Card.Text id={"item_price_" + item.id} data-item-price={item.price}>Price: ${item.price}</Card.Text>
+                                Quantity: <select id={"quantity_item_" + item.id}>{quantityNumberOptions}</select><br /><br />
+                                <Button variant="warning" onClick={handleAddToCart}>Add to cart</Button>
+                                <Button variant="primary" onClick={handleBuyNow}>Buy Now</Button>
+                            </Card.Body>
+                        </Card>);
+                    }));
+
+                    setLoading(false);
                 })
-                    .then(function (response) {
-                        setItemsData(response.data);
-    
-                        setItems(response.data.map((item, index) => {
-                            let quantityNumberOptions = [];
-    
-                            for (let i = 1; i <= parseInt(item.quantity); i++) {
-                                quantityNumberOptions.push(<option key={"item_" + item.id + "_option_" + i} value={i}>{i}</option>);
-                            }
-    
-                            return (<Card key={"item_" + item.id} id={"item_" + item.id}>
-                                <Card.Body>
-                                    <Card.Img variant="right" alt={item.name} src="/logo192.png" style={{ float: 'right' }} />
-                                    <Card.Title>Item: {item.name}</Card.Title>
-                                    <Card.Text>Description: {item.description}</Card.Text>
-                                    <Card.Text id={"item_price_" + item.id} data-item-price={item.price}>Price: ${item.price}</Card.Text>
-                                    Quantity: <select id={"quantity_item_" + item.id}>{quantityNumberOptions}</select><br /><br />
-                                    <Button variant="warning" onClick={handleAddToCart}>Add to cart</Button>
-                                    <Button variant="primary" onClick={handleBuyNow}>Buy Now</Button>
-                                </Card.Body>
-                            </Card>);
-                        }));
-                    })
-                    .catch(function (error) {
-                        if (error.name === 'AbortError') return;
-                        console.log(error);
-                        toast.error(error.response.statusText);
-                    });
-    
-                // fetching category data
-                axios({
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': cookies.tokenType + " " + cookies.jwtToken
-                    },
-                    url: baseURL + "categories/" + categoryId,
-                    signal: categoryDetailsAbortController.signal
+                .catch(function (error) {
+                    if (error.name === 'AbortError') return;
+                    console.log(error);
+                    toast.error(error.response.statusText);
+                });
+
+            // fetching category data
+            axios({
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': cookies.tokenType + " " + cookies.jwtToken
+                },
+                url: baseURL + "categories/" + categoryId,
+                signal: categoryDetailsAbortController.signal
+            })
+                .then(function (response) {
+                    setCategoryDetails(response.data);
                 })
-                    .then(function (response) {
-                        setCategoryDetails(response.data);
-                    })
-                    .catch(function (error) {
-                        if (error.name === 'AbortError') return;
-                        console.log(error);
-                        toast.error(error.response.statusText);
-                    });
-            }, 1000);
+                .catch(function (error) {
+                    if (error.name === 'AbortError') return;
+                    console.log(error);
+                    toast.error(error.response.statusText);
+                });
 
             return (() => {
                 itemsDataAbortController.abort();
@@ -127,10 +129,16 @@ export default function Item() {
         </h1>);
     }
 
-    return (
-        <div className="container" style={{ marginTop: 10 }}>
-            <div className="row justify-content-center" style={{ fontSize: 50, backgroundColor: 'aquamarine' }}>{categoryDetails !== undefined && categoryDetails !== null ? categoryDetails.name.toUpperCase() : "Unable to get category details"}</div>
-            <div className="row">{items}</div>
-        </div>
-    );
+    if (loading === true) {
+        return <Loader />
+    }
+    else {
+        return (
+            <div className="container" style={{ marginTop: 10 }}>
+                <div className="row justify-content-center" style={{ fontSize: 50, backgroundColor: 'aquamarine' }}>{categoryDetails !== undefined && categoryDetails !== null ? categoryDetails.name.toUpperCase() : "Unable to get category details"}</div>
+                <div className="row">{items}</div>
+            </div>
+        );
+    }
+
 }

@@ -176,7 +176,7 @@ export default function Cart(props) {
             .catch(function (error) {
                 toast.error(error.response.statusText);
             });
-    }, [cookies.cartId, cookies.jwtToken, cookies.tokenType]);
+    }, [cookies.cartId, cookies.jwtToken, cookies.tokenType, handleCartQuantityChange]);
 
     useEffect(() => {
         // fetch cart details when the component mounts
